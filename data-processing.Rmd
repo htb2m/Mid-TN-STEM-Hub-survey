@@ -1,0 +1,40 @@
+---
+title: "Data processing"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Library setting up
+```{r}
+library(dplyr)
+library(tidyverse)
+library(here)
+```
+
+## Loading data 
+```{r}
+raw_data <- read.csv(here::here("data", "Mid-TN-STEM-Hub.csv"))
+```
+
+## Subsetting data
+### Returning to School After COVID-19: Using SEL & Trauma Informed Practices to Re-engage Students in STEM Learning
+```{r}
+afterCOVID19 <- raw_data %>%
+    filter( Q14 == "Returning to School After COVID-19: Using SEL & Trauma Informed Practices to Re-engage Students in STEM Learning" |
+            Q14 == "Other") 
+```
+### Valuing and Leveraging Emerging Bilingual Students' Ways of Communicating About the Natural World
+```{r}
+bilingual <- raw_data %>%
+    filter(Q14 == "Valuing and Leveraging Emerging Bilingual Studentsâ€™ Ways of Communicating About the Natural World" | 
+               Q14 == "Other")
+```
+
+### Exporting data files
+```{r}
+afterCOVID19 %>% write.csv(here::here("data", "Mid-TN-STEM-Hub-afterCOVID19.csv"))
+bilingual %>% write.csv(here::here("data", "Mid-TN-STEM-Hub-bilingual.csv"))
+```
