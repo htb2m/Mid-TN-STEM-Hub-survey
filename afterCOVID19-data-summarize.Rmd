@@ -1,0 +1,94 @@
+---
+title: "Descriptive Analysis - afterCOVID19 "
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setting up 
+```{r}
+library(dplyr)
+library(tidyverse)
+library(knitr)
+library(janitor)
+library(wesanderson)
+library(here)
+library(ggplot2)
+```
+
+## Loading data 
+```{r}
+data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
+```
+
+### How many teachers?
+```{r}
+data %>% 
+    filter(Finished == "TRUE") %>%
+    count() 
+    
+```
+
+### What are teachers' roles?
+Note: Some teachers have multiple role
+```{r}
+data %>% 
+    select(Q15_1:Q15_8) %>%
+    pivot_longer(Q15_1:Q15_8, values_to = "ROLE") %>%
+    select(ROLE) %>%
+    drop_na() %>%
+    filter(ROLE != "") %>%
+    tabyl(ROLE) %>%
+    arrange(desc(n)) %>%
+    adorn_pct_formatting(digits = 2) %>%
+    adorn_totals(c("row")) %>%
+    kable()
+```
+
+Other roles
+```{r}
+data %>%
+    select(Q15_8_TEXT) %>%
+    drop_na() %>% 
+    filter(Q15_8_TEXT != '') %>%
+    distinct(Q15_8_TEXT) %>%
+    dplyr::rename("Other Teacher Roles" = Q15_8_TEXT) %>%
+    kable()
+```
+
+### Teaching grades
+Note: Some teachers teach multiple grades
+```{r}
+ data %>% 
+    select(Q16_1:Q16_17) %>%
+    mutate_all(as.character) %>%
+    pivot_longer(Q16_1:Q16_17, values_to = "GRADE") %>%
+    select(GRADE) %>% 
+    drop_na() %>%
+    filter(GRADE != '') %>%
+    group_by(GRADE) %>%
+    count() %>%
+    ggplot(aes(x = factor(GRADE, levels = c("PreK/K", as.character(1:12))), 
+               y=n)) +
+    geom_bar(aes(fill=GRADE), stat = 'identity') +
+    geom_text(aes(label=paste0(n), y=n + 0.25 )) +
+    coord_flip() +
+    scale_fill_manual(values=wes_palette(n=13, name="Darjeeling2", type ="continuous")) +
+    labs(
+    title = "Grades taught",
+    subtitle = "Note: Many teachers teach multiple grades"
+    )+
+    theme_classic()+
+    theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.title.y =element_blank()
+  ) 
+```
+
+### Overall satisfactory
+```{r}
+```
