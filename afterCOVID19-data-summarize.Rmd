@@ -9,13 +9,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Setting up 
 ```{r}
-library(dplyr)
 library(tidyverse)
-library(knitr)
+library(DT)
+library(apaTables)
 library(janitor)
-library(wesanderson)
-library(here)
+library(knitr)
 library(ggplot2)
+library(wesanderson)
+library(patchwork)
+library(Hmisc)
+library(xtable)
 ```
 
 ## Loading data 
@@ -91,4 +94,84 @@ Note: Some teachers teach multiple grades
 
 ### Overall satisfactory
 ```{r}
+data %>% 
+    select(SATISFIED) %>%
+    group_by(SATISFIED) %>%
+    count() %>% 
+    ungroup() %>%
+    mutate(pct = prop.table(n)) %>%
+    ggplot(aes(x= factor(SATISFIED, levels = c("Very satisfied", "Satisfied","Somewhat satisfied", "Not satisfied")), 
+               y=pct)) +
+    geom_bar(aes(fill=SATISFIED), stat = 'identity') + 
+    geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
+    scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
+    scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
+    labs(
+    title = "Overall satisfactory"
+    )+
+    theme_classic()+
+    theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.title.y =element_blank()
+  ) -> overall_satisfactory_viz
+```
+### Technology
+```{r}
+data %>%
+  select(TECH) %>%
+  group_by(TECH) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(pct=prop.table(n)) %>%
+  ggplot(aes(x= factor(TECH, levels = c("Extremely well", "Fairly well","Neither well nor poorly")), 
+               y=pct)) +
+  geom_bar(aes(fill=TECH), stat = 'identity') + 
+  geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
+  scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
+  scale_x_discrete(labels = str_wrap(c("Extremely well", "Fairly well","Neither well nor poorly"), width = 15)) +
+  scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
+  labs(
+    title = "Technology satisfactory"
+    )+
+  theme_classic()+
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.title.y =element_blank()
+  ) -> Tech_viz
+```
+### Information
+```{r}
+data %>%
+  select(INFOR) %>%
+  group_by(INFOR) %>%
+  count() %>% 
+  ungroup() %>%
+  mutate(pct = prop.table(n)) %>%
+  ggplot(aes(x= factor(INFOR, levels = c("All the information", "Most of the information","Some of the information", "A little of the information")), 
+               y=pct)) +
+  geom_bar(aes(fill=INFOR), stat = 'identity') + 
+  geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
+  scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
+  scale_x_discrete(labels = str_wrap(c("All the information", "Most of the information","Some of the information", "A little of the information"), width = 10)) +
+  scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
+  labs(
+    title = "Information satisfactory"
+    )+
+    theme_classic()+
+    theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.title.y =element_blank()
+  ) -> infor_viz
+  
+
+```
+
+```{r}
+overall_satisfactory_viz / (infor_viz + Tech_viz)
 ```
