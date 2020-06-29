@@ -1,7 +1,7 @@
 ---
-title: "Descriptive Analysis - afterCOVID19 workshop "
+title: "Descriptive Analysis - Bilingual workshop"
 author: "Ha Bui"
-date: "6/26/2020"
+date: "6/28/2020"
 output: html_document
 ---
 
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Setting up 
-```{r library, echo=FALSE,include=FALSE}
+```{r library}
 library(tidyverse)
 library(DT)
 library(apaTables)
@@ -24,12 +24,12 @@ library(xtable)
 ```
 
 ## Loading data 
-```{r data, echo=FALSE, include=FALSE}
-data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
+```{r data}
+data <- read.csv(here::here("data","Mid-TN-STEM-Hub-bilingual.csv"))
 ```
 
 ### How many teachers?
-```{r total, echo=FALSE}
+```{r total}
 data %>% 
     filter(Finished == "TRUE") %>%
     count() 
@@ -38,7 +38,7 @@ data %>%
 
 ### What are teachers' roles?
 Note: Some teachers have multiple role
-```{r roles, echo=FALSE}
+```{r roles}
 data %>% 
     select(Q15_1:Q15_8) %>%
     pivot_longer(Q15_1:Q15_8, values_to = "ROLE") %>%
@@ -52,7 +52,8 @@ data %>%
     kable()
 ```
 
-```{r otherroles, echo=FALSE}
+Other roles
+```{r otherroles}
 data %>%
     select(Q15_8_TEXT) %>%
     drop_na() %>% 
@@ -64,7 +65,7 @@ data %>%
 
 ### Teaching grades
 Note: Some teachers teach multiple grades
-```{r grades, echo=FALSE}
+```{r grades}
  data %>% 
     select(Q16_1:Q16_17) %>%
     mutate_all(as.character) %>%
@@ -77,7 +78,7 @@ Note: Some teachers teach multiple grades
     ggplot(aes(x = factor(GRADE, levels = c("PreK/K", as.character(1:12))), 
                y=n)) +
     geom_bar(aes(fill=GRADE), stat = 'identity') +
-    geom_text(aes(label=paste0(n), y=n + 0.25 )) +
+    geom_text(aes(label=paste0(n), y=n + 0.1 )) +
     coord_flip() +
     scale_fill_manual(values=wes_palette(n=13, name="Darjeeling2", type ="continuous")) +
     labs(
@@ -94,14 +95,7 @@ Note: Some teachers teach multiple grades
 ```
 
 ### Overall satisfactory
-```{r satisfactory, echo=FALSE}
-data %>% 
-  select(SATISFIED) %>%
-  tabyl(SATISFIED) %>%
-  adorn_pct_formatting(digits = 2) %>% 
-  dplyr::rename("Overall satisfactory" = SATISFIED) %>%
-  kable()
-
+```{r satisfactory}
 data %>% 
     select(SATISFIED) %>%
     group_by(SATISFIED) %>%
@@ -125,14 +119,9 @@ data %>%
     axis.title.y =element_blank()
   ) -> overall_satisfactory_viz
 ```
+
 ### Technology
-```{r tech, echo=FALSE}
-data %>% 
-  select(TECH) %>%
-  tabyl(TECH) %>%
-  adorn_pct_formatting(digits = 2) %>% 
-  dplyr::rename("Technology satisfactory" = TECH) %>%
-  kable()
+```{r tech}
 data %>%
   select(TECH) %>%
   group_by(TECH) %>%
@@ -158,13 +147,7 @@ data %>%
   ) -> Tech_viz
 ```
 ### Information
-```{r infor, echo=FALSE}
-data %>% 
-  select(INFOR) %>%
-  tabyl(INFOR) %>%
-  adorn_pct_formatting(digits = 2) %>% 
-  dplyr::rename("Information satisfactory" = INFOR) %>%
-  kable()
+```{r infor}
 data %>%
   select(INFOR) %>%
   group_by(INFOR) %>%
@@ -192,6 +175,6 @@ data %>%
 
 ```
 
-```{r, echo=FALSE}
+```{r}
 overall_satisfactory_viz / (infor_viz + Tech_viz)
 ```
