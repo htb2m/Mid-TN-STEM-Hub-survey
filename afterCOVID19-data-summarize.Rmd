@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Setting up 
 ```{r library, echo=FALSE,include=FALSE}
 library(tidyverse)
 library(DT)
@@ -23,7 +22,7 @@ library(Hmisc)
 library(xtable)
 ```
 
-## Loading data 
+ 
 ```{r data, echo=FALSE, include=FALSE}
 data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
 ```
@@ -32,7 +31,9 @@ data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
 ```{r total, echo=FALSE}
 data %>% 
     filter(Finished == "TRUE") %>%
-    count() 
+    count() %>%
+    dplyr::rename("Total" = n) %>%
+    kable(row.names = FALSE)
     
 ```
 
@@ -125,6 +126,7 @@ data %>%
     axis.title.y =element_blank()
   ) -> overall_satisfactory_viz
 ```
+
 ### Technology
 ```{r tech, echo=FALSE}
 data %>% 
@@ -157,6 +159,7 @@ data %>%
     axis.title.y =element_blank()
   ) -> Tech_viz
 ```
+
 ### Information
 ```{r infor, echo=FALSE}
 data %>% 
