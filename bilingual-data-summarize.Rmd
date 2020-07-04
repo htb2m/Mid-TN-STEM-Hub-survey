@@ -6,11 +6,11 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Setting up 
-```{r library}
+
+```{r library, include=FALSE}
 library(tidyverse)
 library(DT)
 library(apaTables)
@@ -23,7 +23,7 @@ library(Hmisc)
 library(xtable)
 ```
 
-## Loading data 
+
 ```{r data}
 data <- read.csv(here::here("data","Mid-TN-STEM-Hub-bilingual.csv"))
 ```
@@ -32,7 +32,8 @@ data <- read.csv(here::here("data","Mid-TN-STEM-Hub-bilingual.csv"))
 ```{r total}
 data %>% 
     filter(Finished == "TRUE") %>%
-    count() 
+    count() %>%
+    kable(row.names = FALSE)
     
 ```
 
@@ -52,7 +53,6 @@ data %>%
     kable()
 ```
 
-Other roles
 ```{r otherroles}
 data %>%
     select(Q15_8_TEXT) %>%
@@ -98,6 +98,12 @@ Note: Some teachers teach multiple grades
 ```{r satisfactory}
 data %>% 
     select(SATISFIED) %>%
+    tabyl(SATISFIED) %>%
+    adorn_pct_formatting(digits = 2) %>%
+    rename("Overall satisfactory" = SATISFIED) %>%
+    kable()
+data %>% 
+    select(SATISFIED) %>%
     group_by(SATISFIED) %>%
     count() %>% 
     ungroup() %>%
@@ -122,6 +128,13 @@ data %>%
 
 ### Technology
 ```{r tech}
+data %>% 
+    select(TECH) %>%
+    tabyl(TECH) %>%
+    adorn_pct_formatting(digits = 2) %>%
+    rename("Technology satisfactory" = TECH) %>%
+    kable()
+
 data %>%
   select(TECH) %>%
   group_by(TECH) %>%
@@ -146,8 +159,16 @@ data %>%
     axis.title.y =element_blank()
   ) -> Tech_viz
 ```
+
 ### Information
 ```{r infor}
+data %>% 
+    select(INFOR) %>%
+    tabyl(INFOR) %>%
+    adorn_pct_formatting(digits = 2) %>%
+    rename("Information satisfactory" = INFOR) %>%
+    kable()
+
 data %>%
   select(INFOR) %>%
   group_by(INFOR) %>%
