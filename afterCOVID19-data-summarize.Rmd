@@ -3,8 +3,8 @@ title: "Returning to School After COVID-19 Workshop Evaluation"
 author: "Ha Bui"
 date: "6/26/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -40,7 +40,7 @@ participants %>% kable()
 ```
 
 ### Teachers' roles?
-Note: Some teachers have multiple role
+Note: Some teachers have multiple roles
 ```{r roles, echo=FALSE}
 data %>% 
     select(Q15_1:Q15_8) %>%
@@ -68,7 +68,7 @@ data %>%
 
 
 
-### Grades taugh in
+### Grades taught in
 Note: Some teachers teach multiple grades
 ```{r grades, echo=FALSE}
  data %>% 
