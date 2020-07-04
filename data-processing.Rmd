@@ -25,16 +25,21 @@ raw_data <- read.csv(here::here("data", "Mid-TN-STEM-Hub.csv"))
 afterCOVID19 <- raw_data %>%
     filter( Q14 == "Returning to School After COVID-19: Using SEL & Trauma Informed Practices to Re-engage Students in STEM Learning" |
             Q14 == "Other") 
+afterCOVID19_open_ended <- afterCOVID19 %>% dplyr::select(Q12:Q11)
 ```
 ### Valuing and Leveraging Emerging Bilingual Students' Ways of Communicating About the Natural World
 ```{r}
 bilingual <- raw_data %>%
     filter(Q14 == "Valuing and Leveraging Emerging Bilingual Studentsâ€™ Ways of Communicating About the Natural World" | 
-               Q14 == "Other")
+           Q14 == "Other")
+bilingual_open_ended <- bilingual %>% dplyr::select(Q12:Q11)
 ```
 
 ### Exporting data files
 ```{r}
 afterCOVID19 %>% write.csv(here::here("data", "Mid-TN-STEM-Hub-afterCOVID19.csv"))
 bilingual %>% write.csv(here::here("data", "Mid-TN-STEM-Hub-bilingual.csv"))
+
+afterCOVID19_open_ended %>% write.csv(here::here("data", "afterCOVID19-open-ended.csv"))
+bilingual_open_ended %>% write.csv(here::here("data", "bilingual-open-ended.csv"))
 ```
