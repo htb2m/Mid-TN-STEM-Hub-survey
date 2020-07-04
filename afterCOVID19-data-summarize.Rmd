@@ -1,12 +1,14 @@
 ---
-title: "Descriptive Analysis - afterCOVID19 workshop "
+title: "Returning to School After COVID-19 Workshop Evaluation"
 author: "Ha Bui"
 date: "6/26/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r library, echo=FALSE,include=FALSE}
@@ -27,17 +29,17 @@ library(xtable)
 data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
 ```
 
-### How many teachers?
+### Survey participants: Teachers
 ```{r total, echo=FALSE}
-data %>% 
+participants <- data %>% 
     filter(Finished == "TRUE") %>%
     count() %>%
-    dplyr::rename("Total" = n) %>%
-    kable(row.names = FALSE)
-    
+    dplyr::rename("Total" = n) 
+rownames(participants) <- c("Unique Responses")
+participants %>% kable()
 ```
 
-### What are teachers' roles?
+### Teachers' roles?
 Note: Some teachers have multiple role
 ```{r roles, echo=FALSE}
 data %>% 
@@ -63,14 +65,17 @@ data %>%
     kable()
 ```
 
-### Teaching grades
+
+
+
+### Grades taugh in
 Note: Some teachers teach multiple grades
 ```{r grades, echo=FALSE}
  data %>% 
-    select(Q16_1:Q16_17) %>%
+    dplyr::select(Q16_1:Q16_17) %>%
     mutate_all(as.character) %>%
     pivot_longer(Q16_1:Q16_17, values_to = "GRADE") %>%
-    select(GRADE) %>% 
+    dplyr::select(GRADE) %>% 
     drop_na() %>%
     filter(GRADE != '') %>%
     group_by(GRADE) %>%
@@ -91,10 +96,13 @@ Note: Some teachers teach multiple grades
     legend.position = "none",
     axis.title.x = element_blank(),
     axis.title.y =element_blank()
-  ) 
+  ) -> teaching_grade_viz
+```
+```{r}
+teaching_grade_viz
 ```
 
-### Overall satisfactory
+### Overall how satisfied teachers were with the workshop?
 ```{r satisfactory, echo=FALSE}
 data %>% 
   select(SATISFIED) %>%
@@ -127,40 +135,7 @@ data %>%
   ) -> overall_satisfactory_viz
 ```
 
-### Technology
-```{r tech, echo=FALSE}
-data %>% 
-  select(TECH) %>%
-  tabyl(TECH) %>%
-  adorn_pct_formatting(digits = 2) %>% 
-  dplyr::rename("Technology satisfactory" = TECH) %>%
-  kable()
-data %>%
-  select(TECH) %>%
-  group_by(TECH) %>%
-  count() %>%
-  ungroup() %>%
-  mutate(pct=prop.table(n)) %>%
-  ggplot(aes(x= factor(TECH, levels = c("Extremely well", "Fairly well","Neither well nor poorly")), 
-               y=pct)) +
-  geom_bar(aes(fill=TECH), stat = 'identity') + 
-  geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
-  scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
-  scale_x_discrete(labels = str_wrap(c("Extremely well", "Fairly well","Neither well nor poorly"), width = 15)) +
-  scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
-  labs(
-    title = "Technology satisfactory"
-    )+
-  theme_classic()+
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "none",
-    axis.title.x = element_blank(),
-    axis.title.y =element_blank()
-  ) -> Tech_viz
-```
-
-### Information
+### How satisfied teachers were with the information received from the workshop? 
 ```{r infor, echo=FALSE}
 data %>% 
   select(INFOR) %>%
@@ -195,6 +170,81 @@ data %>%
 
 ```
 
+### How well did the technology work ? 
+```{r tech, echo=FALSE}
+data %>% 
+  select(TECH) %>%
+  tabyl(TECH) %>%
+  adorn_pct_formatting(digits = 2) %>% 
+  dplyr::rename("Technology satisfactory" = TECH) %>%
+  kable()
+data %>%
+  select(TECH) %>%
+  group_by(TECH) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(pct=prop.table(n)) %>%
+  ggplot(aes(x= factor(TECH, levels = c("Extremely well", "Fairly well","Neither well nor poorly")), 
+               y=pct)) +
+  geom_bar(aes(fill=TECH), stat = 'identity') + 
+  geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
+  scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
+  scale_x_discrete(labels = str_wrap(c("Extremely well", "Fairly well","Neither well nor poorly"), width = 15)) +
+  scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
+  labs(
+    title = "Technology satisfactory"
+    )+
+  theme_classic()+
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.title.y =element_blank()
+  ) -> Tech_viz
+```
+
+
 ```{r, echo=FALSE}
 overall_satisfactory_viz / (infor_viz + Tech_viz)
 ```
+
+### Workshop evaluation
+
+```{r, echo=FALSE}
+workshop_eval <- data %>%
+    dplyr::select(AGREE_1:AGREE_6) %>%
+    gather(measure, response) 
+
+```
+```{r}
+### Creating the contingency table
+contingencytable <- table(workshop_eval$measure, workshop_eval$response) %>% as.data.frame.matrix() 
+```
+```{r}
+# Reorder columns
+contingencytable <- contingencytable %>% 
+    data.table::setcolorder(c("Strongly disagree",
+                              "Disagree",
+                              "Neither agree nor disagree",
+                              "Agree",
+                              "Strongly agree"))
+```
+```{r}
+# Changing row name
+rownames(contingencytable) <- c("The workshop was an effective use of my time",
+                                "The workshop was understandable, clear, and professional" ,
+                                "The workshop leaders were knowledgeable",
+                                "The workshop was relevant to my professional context",
+                                "The workshop addressed a need I have as an educator",
+                                "The workshop will help me to improve my professional practice")
+```
+```{r}
+# adding rownames to columns
+contingencytable <- tibble::rownames_to_column(contingencytable, var = "Measure")
+```
+```{r}
+# knitting to table
+contingencytable %>% dplyr::select(-V1) %>% kable()
+```
+
+![](items/matrix-visualize-afterCOVID19.png)
