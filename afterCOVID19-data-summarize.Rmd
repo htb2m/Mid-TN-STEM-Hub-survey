@@ -1,5 +1,5 @@
 ---
-title: "Returning to School After COVID-19 Workshop Evaluation"
+title: "Returning to School After COVID-19 \nWorkshop Evaluation"
 author: "Ha Bui"
 date: "6/26/2020"
 output:
@@ -29,7 +29,7 @@ library(xtable)
 data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
 ```
 
-### Survey participants: Teachers
+### **Survey participants: Teachers**
 ```{r total, echo=FALSE}
 participants <- data %>% 
     filter(Finished == "TRUE") %>%
@@ -39,8 +39,8 @@ rownames(participants) <- c("Unique Responses")
 participants %>% kable()
 ```
 
-### Teachers' roles?
-Note: Some teachers have multiple roles
+### **Teachers' roles? **
+*Note: Some teachers have multiple roles*
 ```{r roles, echo=FALSE}
 data %>% 
     select(Q15_1:Q15_8) %>%
@@ -68,8 +68,8 @@ data %>%
 
 
 
-### Grades taught in
-Note: Some teachers teach multiple grades
+### **Grades taught in**
+*Note: Some teachers teach multiple grades*
 ```{r grades, echo=FALSE}
  data %>% 
     dplyr::select(Q16_1:Q16_17) %>%
@@ -102,7 +102,7 @@ Note: Some teachers teach multiple grades
 teaching_grade_viz
 ```
 
-### Overall how satisfied teachers were with the workshop?
+### **Overall how satisfied teachers were with the workshop?**
 ```{r satisfactory, echo=FALSE}
 data %>% 
   select(SATISFIED) %>%
@@ -135,7 +135,7 @@ data %>%
   ) -> overall_satisfactory_viz
 ```
 
-### How satisfied teachers were with the information received from the workshop? 
+### **How satisfied teachers were with the information received from the workshop? **
 ```{r infor, echo=FALSE}
 data %>% 
   select(INFOR) %>%
@@ -170,7 +170,7 @@ data %>%
 
 ```
 
-### How well did the technology work ? 
+### **How well did the technology work ?**
 ```{r tech, echo=FALSE}
 data %>% 
   select(TECH) %>%
@@ -208,7 +208,7 @@ data %>%
 overall_satisfactory_viz / (infor_viz + Tech_viz)
 ```
 
-### Workshop evaluation
+### **Workshop evaluation**
 
 ```{r, echo=FALSE}
 workshop_eval <- data %>%
