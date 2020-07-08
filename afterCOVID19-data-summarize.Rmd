@@ -105,7 +105,8 @@ teaching_grade_viz
 ### **Overall how satisfied teachers were with the workshop?**
 ```{r satisfactory, echo=FALSE}
 data %>% 
-  select(SATISFIED) %>%
+  dplyr::select(SATISFIED) %>%
+  mutate(SATISFIED = factor(SATISFIED, c("Very satisfied", "Satisfied","Somewhat satisfied", "Not satisfied"))) %>%
   tabyl(SATISFIED) %>%
   adorn_pct_formatting(digits = 2) %>% 
   dplyr::rename("Overall satisfactory" = SATISFIED) %>%
@@ -138,7 +139,8 @@ data %>%
 ### **How satisfied teachers were with the information received from the workshop? **
 ```{r infor, echo=FALSE}
 data %>% 
-  select(INFOR) %>%
+  dplyr::select(INFOR) %>%
+  mutate(INFOR = factor(INFOR, c("All the information", "Most of the information","Some of the information", "A little of the information"))) %>%
   tabyl(INFOR) %>%
   adorn_pct_formatting(digits = 2) %>% 
   dplyr::rename("Information satisfactory" = INFOR) %>%
@@ -173,7 +175,8 @@ data %>%
 ### **How well did the technology work ?**
 ```{r tech, echo=FALSE}
 data %>% 
-  select(TECH) %>%
+  dplyr::select(TECH) %>%
+  mutate(TECH = factor(TECH, c("Extremely well", "Fairly well","Neither well nor poorly"))) %>%
   tabyl(TECH) %>%
   adorn_pct_formatting(digits = 2) %>% 
   dplyr::rename("Technology satisfactory" = TECH) %>%
