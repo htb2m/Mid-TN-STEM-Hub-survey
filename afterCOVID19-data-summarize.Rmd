@@ -26,7 +26,8 @@ library(xtable)
 
  
 ```{r data, echo=FALSE, include=FALSE}
-data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv"))
+data <- read.csv(here::here("data","Mid-TN-STEM-Hub-afterCOVID19.csv")) %>% 
+  filter(Finished == "TRUE")
 ```
 
 ### **Survey participants: Teachers**
@@ -109,6 +110,7 @@ data %>%
   mutate(SATISFIED = factor(SATISFIED, c("Very satisfied", "Satisfied","Somewhat satisfied", "Not satisfied"))) %>%
   tabyl(SATISFIED) %>%
   adorn_pct_formatting(digits = 2) %>% 
+  adorn_totals(c("row")) %>%
   dplyr::rename("Overall satisfactory" = SATISFIED) %>%
   kable()
 
@@ -143,6 +145,7 @@ data %>%
   mutate(INFOR = factor(INFOR, c("All the information", "Most of the information","Some of the information", "A little of the information"))) %>%
   tabyl(INFOR) %>%
   adorn_pct_formatting(digits = 2) %>% 
+  adorn_totals(c("row")) %>%
   dplyr::rename("Information satisfactory" = INFOR) %>%
   kable()
 data %>%
@@ -178,7 +181,8 @@ data %>%
   dplyr::select(TECH) %>%
   mutate(TECH = factor(TECH, c("Extremely well", "Fairly well","Neither well nor poorly"))) %>%
   tabyl(TECH) %>%
-  adorn_pct_formatting(digits = 2) %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_totals(c("row")) %>%
   dplyr::rename("Technology satisfactory" = TECH) %>%
   kable()
 data %>%
@@ -247,7 +251,7 @@ contingencytable <- tibble::rownames_to_column(contingencytable, var = "Measure"
 ```
 ```{r}
 # knitting to table
-contingencytable %>% dplyr::select(-V1) %>% kable()
+contingencytable %>% kable()
 ```
 
 ![](items/matrix-visualize-afterCOVID19.png)
