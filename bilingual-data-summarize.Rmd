@@ -100,9 +100,11 @@ teach_grades
 ### Overall how satisfied teachers were with the workshop?
 ```{r satisfactory}
 data %>% 
-    select(SATISFIED) %>%
+    dplyr::select(SATISFIED) %>%
+    mutate(SATISFIED = factor(SATISFIED, c("Very satisfied", "Satisfied","Somewhat satisfied"))) %>%
     tabyl(SATISFIED) %>%
     adorn_pct_formatting(digits = 2) %>%
+    adorn_totals(c("row")) %>%
     rename("Overall satisfactory" = SATISFIED) %>%
     kable()
 data %>% 
@@ -133,8 +135,10 @@ data %>%
 ```{r infor}
 data %>% 
     select(INFOR) %>%
+    mutate(INFOR = factor(INFOR, c("All the information", "Most of the information","Some of the information", "None of the information"))) %>%
     tabyl(INFOR) %>%
     adorn_pct_formatting(digits = 2) %>%
+    adorn_totals(c("row")) %>%
     rename("Information satisfactory" = INFOR) %>%
     kable()
 
@@ -144,12 +148,12 @@ data %>%
   count() %>% 
   ungroup() %>%
   mutate(pct = prop.table(n)) %>%
-  ggplot(aes(x= factor(INFOR, levels = c("All the information", "Most of the information","Some of the information", "A little of the information")), 
+  ggplot(aes(x= factor(INFOR, levels = c("All the information", "Most of the information","Some of the information", "None of the information")), 
                y=pct)) +
   geom_bar(aes(fill=INFOR), stat = 'identity') + 
   geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
   scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
-  scale_x_discrete(labels = str_wrap(c("All the information", "Most of the information","Some of the information", "A little of the information"), width = 10)) +
+  scale_x_discrete(labels = str_wrap(c("All the information", "Most of the information","Some of the information", "None of the information"), width = 10)) +
   scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
   labs(
     title = "Information satisfactory"
@@ -168,9 +172,11 @@ data %>%
 ### How well did the technology work ? 
 ```{r tech}
 data %>% 
-    select(TECH) %>%
+    dplyr::select(TECH) %>%
+    mutate(TECH = factor(TECH, c("Extremely well", "Fairly well", "Fairly poorly"))) %>%
     tabyl(TECH) %>%
     adorn_pct_formatting(digits = 2) %>%
+    adorn_totals(c("row")) %>%
     rename("Technology satisfactory" = TECH) %>%
     kable()
 
@@ -180,12 +186,12 @@ data %>%
   count() %>%
   ungroup() %>%
   mutate(pct=prop.table(n)) %>%
-  ggplot(aes(x= factor(TECH, levels = c("Extremely well", "Fairly well","Neither well nor poorly")), 
+  ggplot(aes(x= factor(TECH, levels = c("Extremely well", "Fairly well", "Fairly poorly")), 
                y=pct)) +
   geom_bar(aes(fill=TECH), stat = 'identity') + 
   geom_text(aes(label=paste0(round(pct*100, digits = 2),"%")), vjust=-0.5) +
   scale_y_continuous(labels = scales::percent_format(), limits=c(0,1))+
-  scale_x_discrete(labels = str_wrap(c("Extremely well", "Fairly well","Neither well nor poorly"), width = 15)) +
+  scale_x_discrete(labels = str_wrap(c("Extremely well", "Fairly well", "Fairly poorly"), width = 15)) +
   scale_fill_manual(values=wes_palette(n=4, name="Darjeeling2", type ="continuous")) +
   labs(
     title = "Technology satisfactory"
